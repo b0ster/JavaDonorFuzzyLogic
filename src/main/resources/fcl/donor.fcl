@@ -1,0 +1,52 @@
+FUNCTION_BLOCK donor
+
+VAR_INPUT
+	capital : REAL;
+	influence : REAL;
+	spent_rate : REAL;
+END_VAR
+
+VAR_OUTPUT
+	donation : REAL;
+END_VAR
+
+FUZZIFY capital
+	TERM poor := (0, 1) (3000, 0) ;
+	TERM average := (2000, 0) (5000,1) (8000,1) (10000,0);
+	TERM rich := (7500, 0) (15000, 1) (22500, 1) (30000, 0);
+END_FUZZIFY
+
+FUZZIFY influence
+	TERM low := (0, 1) (1, 1) (2,0);
+	TERM medium := (1,0) (2, 1) (4, 0);
+	TERM high := (3, 0) (6, 1) (10, 0);
+END_FUZZIFY
+
+FUZZIFY spend_rate
+	TERM little := (0, 1) (1, 1) (3,0);
+	TERM medium := (2,0) (4, 1) (6, 0);
+	TERM much := (5, 0) (8, 1) (10, 0);
+END_FUZZIFY
+
+DEFUZZIFY donation
+	TERM low := (0,0) (5,1) (10,0);
+	TERM medium := (7,0) (20,1) (30,0);
+	TERM high := (25,0) (50,1) (60,0);
+	TERM super := (22,0) (75,1) (100,0);
+	METHOD : COG;
+	DEFAULT := 0;
+END_DEFUZZIFY
+
+RULEBLOCK No1
+	AND : MIN;
+	ACT : MIN;
+	ACCU : MAX;
+
+	RULE 1 : IF capital IS poor OR spend_rate IS little OR influence IS low THEN donation IS low;
+	RULE 2 : IF spend_rate IS medium OR capital IS rich THEN donation IS medium;
+	RULE 3 : IF spend_rate IS much AND capital IS rich  THEN donation IS high;
+	RULE 4 : IF spend_rate IS much AND capital IS average AND influence IS high THEN donation IS high;
+	RULE 5 : IF spend_rate IS much AND capital IS rich AND influence IS high THEN donation IS super;
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
