@@ -4,36 +4,36 @@ import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
 import net.sourceforge.jFuzzyLogic.rule.Variable;
 
+/**
+ * @author Bo Sterenborg
+ */
 public class JavaFuzzyLogic {
     public static void main(String[] args) {
 
-// Load from 'FCL' file
+        //Load the FIS
         String fileName = "src/main/resources/fcl/donor.fcl";
         FIS fis = FIS.load(fileName, true);
 
-        // Error while loading?
+       //Check if exists
         if (fis == null) {
             System.err.println("Can't load file: '" + fileName + "'");
             return;
         }
 
-        // Show
+        //Show the fis itself
         JFuzzyChart.get().chart(fis);
 
-        // Set inputs
+        //Set input variables
         fis.setVariable("capital", 20000);
         fis.setVariable("influence", 3);
         fis.setVariable("spend_rate", 7);
 
-        // Evaluate
+        //Start the evaluation
         fis.evaluate();
 
-        // Show output variable's chart
+        //Show the output
         Variable tip = fis.getVariable("donation");
         JFuzzyChart.get().chart(tip, tip.getDefuzzifier(), true);
-
-        // Print ruleSet
-        System.out.println(fis);
     }
 }
 
